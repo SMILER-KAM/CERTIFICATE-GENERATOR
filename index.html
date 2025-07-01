@@ -32,41 +32,37 @@
             canvas.height = image.height;
             ctx.drawImage(image, 0, 0);
         }
-        async function generate() {
-        const name = document.getElementById("name").value;
-        if (!name) {
-            document.getElementById("result").innerHTML = 'Enter Name';
-            return;
+        function generate()
+        {
+            const name=document.getElementById("name").value
+            if (name==="")
+            {
+                document.getElementById("result").innerHTML='Enter Name'
+            }
+            else
+            {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(image, 0, 0);
+                ctx.font = "100px Arial";
+                ctx.fillStyle = "black";
+                ctx.textBaseline = "top";
+                ctx.fillText(name, 650, 650);
+            }
         }
+        async function final() 
+        {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF
+            ({
+                orientation: "landscape",
+                unit: "px",
+                format: [canvas.width, canvas.height]
+            });
 
-        // Clear canvas and redraw base image
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0);
-
-        // Draw the name (centered horizontally)
-        ctx.font = "100px Arial";
-        ctx.fillStyle = "black";
-        ctx.textBaseline = "top";
-        const textWidth = ctx.measureText(name).width;
-        const x = (canvas.width - textWidth) / 2;
-        const y = 650;
-        ctx.fillText(name, x, y);
-
-        // Generate PDF and download
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-            orientation: "landscape",
-            unit: "px",
-            format: [canvas.width, canvas.height]
-        });
-
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-        pdf.save("certificate.pdf");
-
-        document.getElementById("result").innerHTML = "Certificate downloaded!";
-    }
-
+            const imgData = canvas.toDataURL("image/png");
+            pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+            pdf.save("certificate.pdf");
+        }
 
     </script>
 </body>
