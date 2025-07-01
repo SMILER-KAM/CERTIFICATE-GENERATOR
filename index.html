@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERTIFICATE-GENERATOR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container text-center mt-2">
+        <h1>CERTIFICATE GENERATOR</h1>
+        
+        <canvas id="certificatecanvas" class="img-thumbnail mt-2 w-50 mx-auto d-block"></canvas>
+        <div class="mb-2">Sample Certificate</div>
+        <input placeholder="Enter Name" class="form-control w-50 mx-auto" id="name">
+        <div class="mt-2">
+            <button type="button" class="btn btn-primary" id="btn1" onclick="generate()">Generate</button>
+            <button type="button" class="btn btn-danger" id="btn2" onclick="final()">Download</button>
+        </div>
+        <h3 id="result" class="mt-2"></h3>
+    </div>
+    <script>
+        const canvas = document.getElementById('certificatecanvas');
+        const ctx = canvas.getContext('2d');
+        const image = new Image();
+        image.src = 'sample.jpg'; 
+
+        image.onload = function () 
+        {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+        }
+        async function generate() {
+        const name = document.getElementById("name").value;
+        if (!name) {
+            document.getElementById("result").innerHTML = 'Enter Name';
+            return;
+        }
+
+        // Clear canvas and redraw base image
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+
+        // Draw the name (centered horizontally)
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "black";
+        ctx.textBaseline = "top";
+        const textWidth = ctx.measureText(name).width;
+        const x = (canvas.width - textWidth) / 2;
+        const y = 650;
+        ctx.fillText(name, x, y);
+
+        // Generate PDF and download
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [canvas.width, canvas.height]
+        });
+
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+        pdf.save("certificate.pdf");
+
+        document.getElementById("result").innerHTML = "Certificate downloaded!";
+    }
+
+
+    </script>
+</body>
+</html>
