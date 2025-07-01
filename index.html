@@ -17,9 +17,17 @@
         <div class="mt-2">
             <button type="button" class="btn btn-primary" id="btn1" onclick="generate()">Generate</button>
             <button type="button" class="btn btn-danger" id="btn2" onclick="final()">Download</button>
+            <button type="button" class="btn btn-secondary" id="btn3" onclick="next()">Next</button>
         </div>
         <h3 id="result" class="mt-2"></h3>
     </div>
+
+    <script>
+        document.getElementById('btn1').style.display='none'
+        document.getElementById('btn2').style.display='none'
+        document.getElementById('btn3').style.display='none'
+    </script>
+
     <script>
         const canvas = document.getElementById('certificatecanvas');
         const ctx = canvas.getContext('2d');
@@ -31,13 +39,15 @@
             canvas.width = image.width;
             canvas.height = image.height;
             ctx.drawImage(image, 0, 0);
+            document.getElementById('btn1').style.display='inline-block'
         }
+
         function generate()
         {
             const name=document.getElementById("name").value
             if (name==="")
             {
-                document.getElementById("result").innerHTML='Enter Name'
+                alert("Please enter a name");
             }
             else
             {
@@ -47,23 +57,45 @@
                 ctx.fillStyle = "black";
                 ctx.textBaseline = "top";
                 ctx.fillText(name, 650, 650);
+                document.getElementById('btn2').style.display='inline-block'
+                document.getElementById('btn3').style.display='inline-block'
+                document.getElementById('result').textContent = "Certificate Generated successfully!";
             }
         }
+
         async function final() 
         {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF
-            ({
-                orientation: "landscape",
-                unit: "px",
-                format: [canvas.width, canvas.height]
-            });
+            if(confirm("Are you sure you want to download the certificate?"))
+            {
+                if (canvas.width === 0 || canvas.height === 0) 
+                {
+                    alert("Please generate the certificate first.");
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF
+                ({
+                    orientation: "landscape",
+                    unit: "px",
+                    format: [canvas.width, canvas.height]
+                });
 
-            const imgData = canvas.toDataURL("image/png");
-            pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-            pdf.save("certificate.pdf");
+                const imgData = canvas.toDataURL("image/png");
+                pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+                pdf.save("certificate.pdf");
+                document.getElementById('result').textContent = "PDF downloaded successfully!";
+            }
         }
 
+        function next()
+        {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0);
+            document.getElementById("name").value = "";
+            document.getElementById('btn2').style.display = 'none';
+            document.getElementById('btn3').style.display = 'none'; 
+            document.getElementById('result').textContent = "";
+        }
     </script>
 </body>
 </html>
