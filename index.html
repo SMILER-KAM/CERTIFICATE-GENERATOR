@@ -112,7 +112,7 @@
                         format: [canvas.width, canvas.height]
                     });
 
-                    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+                    pdf.addImage(certificateimage[i], "PNG", 0, 0, canvas.width, canvas.height);
 
                     const pdfBlob = pdf.output('blob');
                     zip.file(`${namesarray[i].replace(/\s+/g, '_')}.pdf`, pdfBlob);
